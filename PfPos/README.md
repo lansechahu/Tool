@@ -2,4 +2,4 @@
 
 粒子组成图形
 
-demo: https://lansechahu.github.io/Tool/PfPos/pixi.html
+demo: https://lansechahu.github.io/Tool/PfPos/
