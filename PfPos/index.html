@@ -56,7 +56,8 @@
 			
 			#btn,
 			#btn2,
-			#btn3 {
+			#btn3,
+			#btn4 {
 				position: absolute;
 				width: 100px;
 				height: 30px;
@@ -70,7 +71,12 @@
 			
 			#btn3 {
 				top: 50px;
-				left: 100px;
+				left: 110px;
+			}
+			
+			#btn4 {
+				top: 50px;
+				left: 0px;
 			}
 		</style>
 	</head>
@@ -83,6 +89,7 @@
 		<button id="btn">确定</button>
 		<button id="btn2">倒计时</button>
 		<button id="btn3">画图形</button>
+		<button id="btn4">二维码</button>
 
 		<script src="js/PfPos.js"></script>
 		<script>
@@ -96,6 +103,9 @@
 			document.getElementById('pixiStage').appendChild(app.view);
 
 			var stage = app.stage;
+
+			var gap = 11; //间隙
+			var targetScale = 1; //组合成图形时点点的大小
 
 			var line = new PIXI.Graphics();
 			stage.addChild(line);
@@ -130,6 +140,8 @@
 			//拼字
 			$('#btn').on('click', function() {
 				clearInterval(daojishi);
+				targetScale = 1;
+				gap = 11;
 				var __txt = document.getElementById('txt').value;
 				pin(__txt);
 			});
@@ -137,6 +149,9 @@
 			//倒计时
 			var daojishi;
 			$('#btn2').on('click', function() {
+				clearInterval(daojishi);
+				targetScale = 1;
+				gap = 11;
 				var num = 9;
 				pin(num);
 				daojishi = setInterval(function() {
@@ -152,16 +167,26 @@
 			//拼图形
 			$('#btn3').on('click', function() {
 				clearInterval(daojishi);
-				pin2();
+				targetScale = 1;
+				gap = 11;
+				pin2('images/pc2.png');
+			});
+
+			//拼二维码
+			$('#btn4').on('click', function() {
+				clearInterval(daojishi);
+				targetScale = 0.5;
+				gap = 4;
+				pin2('images/pc3.png');
 			});
 
 			//拼图形
-			function pin2() {
+			function pin2(__src) {
 				var transObj = {}; //像素图组的左上角位置和宽高
 
 				var config = {
 					type: 'pic',
-					picSrc: 'images/pc2.png',
+					picSrc: __src,
 					skewX: 10,
 					skewY: 10,
 					width: width,
@@ -191,58 +216,13 @@
 				};
 
 				PfPos.getImageData(config);
-				return;
-
-				var myPos = getKeyPos(13, data, width, height);
-				transObj = getTrans(myPos); //获取像素图组的左上角位置和宽高
-
-				//初始化之前被选中的点的状态
-				for(var i = 0; i < dotArr.length; i++) {
-					var temp = dotArr[i];
-					if(temp.isSelect == true) {
-						temp.isSelect = false;
-						temp.speedX = getSpeed();
-						temp.speedY = getSpeed();
-					}
-				}
-
-				//用点组成图形，点不够的话就添加点
-				for(var i = 0; i < myPos.length; i++) {
-					var temp = myPos[i];
-					var dot;
-					if(i >= dotArr.length) {
-						dot = createDot('0xff0000');
-						dot.x = Math.random() * width;
-						dot.y = Math.random() * height;
-						dot.alpha = 1;
-						stage.addChild(dot);
-						dotArr.push(dot);
-					} else {
-						dot = dotArr[i];
-					}
-					dot.isSelect = true;
-
-					var targetX = (temp.x - transObj.minX) + width / 2 - transObj.maxX / 2;
-					var targetY = (temp.y - transObj.minY) + height / 2 - transObj.maxY / 2;
-
-					TweenMax.to(dot, 0.5, {
-						x: targetX,
-						y: targetY,
-						alpha: 1
-					});
-
-					TweenMax.to(dot.scale, 0.5, {
-						x: 1,
-						y: 1
-					});
-				}
 			}
 
 			//组合图形
 			function showPic(__data) {
 				var data = __data;
 
-				var myPos = PfPos.getKeyPos(11, data, width, height);
+				var myPos = PfPos.getKeyPos(gap, data, width, height);
 				transObj = PfPos.getTrans(myPos); //获取像素图组的左上角位置和宽高
 
 				//初始化之前被选中的点的状态
@@ -281,8 +261,8 @@
 					});
 
 					TweenMax.to(dot.scale, 0.5, {
-						x: 1,
-						y: 1
+						x: targetScale,
+						y: targetScale
 					});
 				}
 			}
@@ -296,8 +276,8 @@
 					var dot = dotArr[i];
 
 					if(dot.isSelect == true) {
-						dot.child.x = 1 - Math.random() * 2;
-						dot.child.y = 1 - Math.random() * 2;
+						/*dot.child.x = 1 - Math.random() * 2;
+						dot.child.y = 1 - Math.random() * 2;*/
 					} else {
 						dot.scale.x += (0.2 - dot.scale.x) * 0.05;
 						dot.scale.y += (0.2 - dot.scale.y) * 0.05;
