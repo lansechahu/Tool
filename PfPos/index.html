@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="1000" height="1000"></canvas>
+
+		<script src="js/GetKeyPos.js"></script>
+		<script>
+			var width = 1000;
+			var height = 1000;
+			var canvas = document.getElementById('myCanvas');
+			var ctx = canvas.getContext('2d');
+			ctx.textBaseline = 'middle';
+			ctx.textAlign = 'center';
+			ctx.font = 'bold 280px arial';
+			ctx.fillText('屎', 500, 500);
+			var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+			var myPos = getKeyPos(13, data, width, height);
+
+			ctx.clearRect(0, 0, width, height); //清除原始文字
+
+			//拼图形
+			for(var i = 0; i < myPos.length; i++) {
+				var temp = myPos[i];
+				ctx.fillStyle = "#ff0000";
+				ctx.beginPath();
+				ctx.arc(temp.x, temp.y, 6, 0, Math.PI * 2, true);
+				ctx.closePath();
+				ctx.fill();
+			}
+		</script>
+	</body>
+
+</html>
