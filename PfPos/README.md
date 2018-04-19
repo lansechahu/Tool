@@ -1,3 +1,5 @@
-# Tool
+# PfPos
 
-存放一些功能性的小程序
+粒子组成图形
+
+demo: https://lansechahu.github.io/Tool/PfPos/pixi.html
